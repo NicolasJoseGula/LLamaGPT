@@ -70,7 +70,7 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {messages.length === 0 && (
           <p className="text-center text-gray-500 mt-20">
-            Hacé una pregunta para empezar
+            Ask a question!
           </p>
         )}
         {messages.map((msg, i) => (
@@ -100,7 +100,7 @@ export default function Home() {
         <div className="flex gap-2 max-w-3xl mx-auto">
           <input
             className="flex-1 bg-gray-800 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Escribí tu mensaje..."
+            placeholder="Write your prompt"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -111,7 +111,7 @@ export default function Home() {
             disabled={loading}
             className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-4 py-3 rounded-xl text-sm font-medium transition"
           >
-            {loading ? "..." : "Enviar"}
+            {loading ? "..." : "Send"}
           </button>
         </div>
       </div>
