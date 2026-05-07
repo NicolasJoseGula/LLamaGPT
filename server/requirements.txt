@@ -4,3 +4,4 @@ groq
 python-dotenv
 pydantic-settings
 slowapi
+wheel>=0.46.2
