@@ -11,8 +11,9 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title="LlamaGPT API", 
     version="1.0.0",
-    docs_url="llamagpt-api-docs"
+    docs_url="/llamagpt-api-docs"
 )
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
