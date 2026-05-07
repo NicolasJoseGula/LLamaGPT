@@ -1,4 +1,4 @@
-# LlamaGPT
+<h1 align="center">LlamaGPT</h1>
 
 ![](./images/logo.png)
 
