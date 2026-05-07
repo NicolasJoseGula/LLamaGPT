@@ -40,3 +40,5 @@ jobs:
           image-ref: llamagpt-backend
           severity: CRITICAL,HIGH
           exit-code: '1'
+          # El pipeline falla solo si hay vulns que tienen fix disponible pero no aplicadas.
+          ignore-unfixed: true
