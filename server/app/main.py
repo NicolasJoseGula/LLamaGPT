@@ -11,7 +11,9 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title="LlamaGPT API", 
     version="1.0.0",
-    docs_url="/llamagpt-api-docs"
+    docs_url="None",
+    redoc_url="None",
+    openapi_url="None"
 )
 
 app.state.limiter = limiter
