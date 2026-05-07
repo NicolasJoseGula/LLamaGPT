@@ -1,1 +1,4 @@
 .env
+.vercel
+server/app/__pycache__/main.cpython-314.pyc
+server/app/routes/__pycache__/chat.cpython-314.pyc
