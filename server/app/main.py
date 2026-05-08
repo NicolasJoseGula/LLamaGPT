@@ -10,7 +10,9 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="LlamaGPT API", 
-    version="1.0.0",
+    # Version: 1.0.0
+    # Version: 1.0.1 -> Contexto de todos los mensajes (Al refrescar la pagina se pierde todo)
+    version="1.0.1", 
     docs_url=None,
     redoc_url=None,
     openapi_url=None
