@@ -116,6 +116,8 @@ LLamaGPT/
 
 ## Author
 
-**Nicolas Gula** — AI Engineer / AI Security Engineer
+**Nicolas Gula** — AI Security Engineer
 
-[GitHub](https://github.com/NicolasJoseGula)
+This project is part of my [8-month public sprint](https://github.com/aisecurityengineering/ai-sprint) pivoting from offensive security to AI Security Engineering
+
+[Linkedin](https://www.linkedin.com/in/nicolasgula/)
