@@ -11,12 +11,16 @@ limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 client = Groq(api_key=settings.groq_api_key)
 
-class ChatRequest(BaseModel):
-    question: str
+class Message(BaseModel):
+    role: str # User o Assistant
+    content: str
 
-def generate_stream_groq(question: str):
+class ChatRequest(BaseModel):
+    messages: list[Message] # Historial Completo
+
+def generate_stream_groq(messages: list[Message]):
     stream = client.chat.completions.create(
-        messages=[{"role": "user", "content": question}],
+        messages=[{"role": m.role, "content": m.content} for m in messages],
         model="llama-3.1-8b-instant",
         stream=True,
     )
@@ -35,7 +39,8 @@ async def chat(
     # Validar que viene del BFF
     if x_internal_token != settings.api_secret:
         raise HTTPException(status_code=403, detail="Forbidden")
-    else:
-        generator = generate_stream_groq(chat_request.question)
 
-    return StreamingResponse(generator, media_type="text/plain")
+    return StreamingResponse(
+        generate_stream_groq(chat_request.messages), 
+        media_type="text/plain"
+    )
