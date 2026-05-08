@@ -121,3 +121,5 @@ LLamaGPT/
 This project is part of my [8-month public sprint](https://github.com/aisecurityengineering/ai-sprint) pivoting from offensive security to AI Security Engineering
 
 [Linkedin](https://www.linkedin.com/in/nicolasgula/)
+
+---
