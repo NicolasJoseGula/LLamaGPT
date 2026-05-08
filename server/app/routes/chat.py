@@ -17,7 +17,7 @@ class Message(BaseModel):
     content: str
 
 class ChatRequest(BaseModel):
-    messages: list[Message] # Historial Completo
+    messages: list[Message] # Full historial
 
 def generate_stream_groq(messages: list[Message]):
     stream = client.chat.completions.create(
@@ -37,11 +37,11 @@ async def chat(
     chat_request: ChatRequest,
     x_internal_token: Optional[str] = Header(None)    
 ):
-    # Validar que viene del BFF
+    # Validate what comes from BFF
     if x_internal_token != settings.api_secret:
         raise HTTPException(status_code=403, detail="Forbidden")
     
-    # Validar solo el ultimo mensaje del usuario
+    # Validate only the user's latest message
     last_message = chat_request.messages[-1]
     if last_message.role == "user":
         validate_message(last_message)
