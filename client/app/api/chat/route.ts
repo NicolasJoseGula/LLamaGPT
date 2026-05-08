@@ -20,6 +20,6 @@ export async function POST(req: NextRequest) {
         headers:{
             "Content-Type": "text/plain",
             "Transfer-Encoding": "chunked"
-        }
-    })
+        },
+    });
 }
