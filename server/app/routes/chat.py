@@ -6,6 +6,7 @@ from app.config import settings
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from typing import Optional
+from app.security import validate_message
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
@@ -39,6 +40,11 @@ async def chat(
     # Validar que viene del BFF
     if x_internal_token != settings.api_secret:
         raise HTTPException(status_code=403, detail="Forbidden")
+    
+    # Validar solo el ultimo mensaje del usuario
+    last_message = chat_request.messages[-1]
+    if last_message.role == "user":
+        validate_message(last_message)
 
     return StreamingResponse(
         generate_stream_groq(chat_request.messages), 
