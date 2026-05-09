@@ -151,6 +151,24 @@ Bandit completes the static analysis layer of the pipeline. Combined with
 Safety (dependency CVEs) and Trivy (Docker image), every layer of the stack 
 is covered — dependencies, container, and application code.
 
+---
+
+### Structured logging
+
+Every request generates JSON log events visible in Railway's log dashboard:
+
+```json
+{"event": "chat_request", "ip": "x.x.x.x", "message_count": 3, "input_length": 42}
+{"event": "chat_completed", "ip": "x.x.x.x", "duration_ms": 331}
+{"event": "guardrail_blocked", "ip": "x.x.x.x", "status_code": 400, "duration_ms": 312}
+{"event": "unauthorized_request", "ip": "x.x.x.x"}
+{"event": "stream_error", "ip": "x.x.x.x", "error": "...", "duration_ms": 120}
+```
+
+Structured JSON logs enable filtering, aggregation, and alerting in any 
+observability platform (Datadog, Grafana, CloudWatch). Each event captures 
+what happened, who triggered it, and how long it took — the minimum required 
+for incident response and abuse detection.
 
 ---
 
