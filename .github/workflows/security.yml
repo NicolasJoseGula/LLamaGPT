@@ -15,6 +15,20 @@ jobs:
           fetch-depth: 0
       - name: Gitleaks - detect hardcoded secrets
         uses: gitleaks/gitleaks-action@v2
+  
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Bandit - Python SAST 
+        run: |
+          pip install bandit
+          bandit -r server/app/ -ll -f txt
+
+
 
   dependency-scan:
     runs-on: ubuntu-latest
