@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    groq_api_key: str
+    groq_api_key: str = ""
     allowed_origins: str = "http://localhost:3000"
     api_secret: str = ""
 

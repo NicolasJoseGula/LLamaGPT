@@ -55,6 +55,9 @@ jobs:
           cd server
           pip install -r requirements.txt
       - name: Run security tests
+        env:
+          GROQ_API_KEY: "fake-key-for-testing"
+          API_SECRET: "fake-secret-for-testing"
         run: |
           cd server 
           pytest tests/test_security.py -v
