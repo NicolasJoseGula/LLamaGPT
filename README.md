@@ -131,6 +131,26 @@ the conversation history to push the system prompt out of the model's attention 
 can degrade its effectiveness. This is mitigated by the message length limit and 
 the planned context truncation (see roadmap).
 
+---
+
+### SAST — Static Application Security Testing
+
+Every push runs Bandit against the application source code (`server/app/`), 
+scanning for common Python security vulnerabilities without executing the code:
+
+- Hardcoded credentials or secrets
+- Use of insecure functions (`eval`, `exec`, `pickle`)
+- Unsafe subprocess calls
+- Insecure random number generation
+- Binding to all interfaces unintentionally
+- Use of weak cryptographic primitives (MD5, SHA1)
+
+Current status: **0 findings** at MEDIUM/HIGH severity.
+
+Bandit completes the static analysis layer of the pipeline. Combined with 
+Safety (dependency CVEs) and Trivy (Docker image), every layer of the stack 
+is covered — dependencies, container, and application code.
+
 
 ---
 
