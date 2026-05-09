@@ -1,43 +1,39 @@
-# Prompt Injection detection
 from fastapi import HTTPException
-
-INJECTION_PATTERNS = [
-    "ignore previous instructions",
-    "ignore all instructions",
-    "ignore your instructions",
-    "forget everything",
-    "forget your instructions",
-    "you are now",
-    "act as if",
-    "act as a",
-    "pretend you are",
-    "pretend to be",
-    "jailbreak",
-    "dan mode",
-    "developer mode",
-    "override instructions",
-    "disregard previous",
-    "new persona",
-    "your true self",
-    "ignore the above",
-    "ignore everything above"
-]
+from groq import Groq
+from app.config import Settings
 
 MAX_MESSAGE_LENGTH = 2000
 
-def validate_message(content: str) -> None:
-    # 1. Largo Maximo
+async def validate_message(content: str) -> None:
+    # 1.Largo Maximo
     if len(content) > MAX_MESSAGE_LENGTH:
         raise HTTPException(
-            status_code=400,
-            detail=f"Message too long. Maximum {MAX_MESSAGE_LENGTH} characters"
+            status_code = 400,
+            detail=f"Message too Long. Maximum {MAX_MESSAGE_LENGTH} characters."
         )
     
-    # 2. Prompt Injection
-    content_lower = content.lower()
-    for pattern in INJECTION_PATTERNS:
-        if pattern in content_lower:
+    # 2. Llama Guard - detect prompt injection, armful content, etc.
+    client = Groq(api_key=Settings.groq_api_key)
+    
+    try:
+        response = client.chat.completions.create(
+            # https://huggingface.co/meta-llama/Llama-Guard-4-12B
+            model="meta-llama/llama-guard-4-12b",
+            messages=[{"role":"user", "content":content}],
+            max_tokens=10,
+        )
+        result = response.choices[0].message.content.strip().lower()
+        
+        if result.startswith("unsafe"):
             raise HTTPException(
                 status_code=400,
                 detail="Message contains potentially harmful content."
             )
+    except HTTPException:
+        raise
+    except Exception:
+        # Fail closed — Uncomment for maximum security
+        # raise HTTPException(status_code=503, detail="Security check unavailable.")
+        # If Llama Guard fails, we let it pass (fail open)
+        # In critical production environments, switch to fail closed
+        pass

@@ -44,7 +44,7 @@ async def chat(
     # Validate only the user's latest message
     last_message = chat_request.messages[-1]
     if last_message.role == "user":
-        validate_message(last_message.content)
+        await validate_message(last_message.content)
 
     return StreamingResponse(
         generate_stream_groq(chat_request.messages), 
