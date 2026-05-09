@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from groq import Groq
-from app.config import Settings
+from app.config import settings
 
 MAX_MESSAGE_LENGTH = 2000
 
@@ -13,7 +13,7 @@ async def validate_message(content: str) -> None:
         )
     
     # 2. Llama Guard - detect prompt injection, armful content, etc.
-    client = Groq(api_key=Settings.groq_api_key)
+    client = Groq(api_key=settings.groq_api_key)
     
     try:
         response = client.chat.completions.create(
