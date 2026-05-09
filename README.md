@@ -33,8 +33,6 @@ This application faces two categories of threats common to LLM-based systems:
 extract system information, or make it act outside its intended purpose.
 2. **Harmful content** — requests for dangerous, illegal, or abusive content.
 
----
-
 ### Defense layers
 
 | Layer | Mechanism | Scope |
@@ -44,8 +42,6 @@ extract system information, or make it act outside its intended purpose.
 | System prompt | Fixed, non-overridable | Constrains model behavior at the API level |
 | Rate limiting | 10 req/min per IP | Limits brute-force and abuse |
 | Internal token | X-Internal-Token header | Only the BFF can call the backend |
-
----
 
 ### Why Llama Guard over pattern matching
 
@@ -61,8 +57,6 @@ This approach has critical weaknesses:
 classification, aligned to the MLCommons hazards taxonomy. It understands semantic intent 
 regardless of language, phrasing, or obfuscation. The same input in English, Spanish, or 
 Base64 encoding is evaluated on meaning, not surface patterns.
-
----
 
 ### Architectural decision: fail open vs fail closed
 
@@ -92,8 +86,6 @@ latency per request. In a production system with strict SLAs, this tradeoff woul
 re-evaluated and likely resolved by running a self-hosted guardrail model to eliminate 
 the external dependency.
 
----
-
 ### What this doesn't cover (known limitations)
 
 No security layer is complete. Known gaps in this implementation:
@@ -108,6 +100,37 @@ No security layer is complete. Known gaps in this implementation:
 
 These limitations are documented here because understanding the boundaries of a security 
 control is as important as implementing it.
+
+---
+
+## System prompt
+
+Every conversation includes a fixed system prompt injected server-side before any 
+user message. The user cannot see, modify, or override it.
+
+```
+[system prompt]  ← injected by the server, never exposed
+[user message 1]
+[assistant message 1]
+[user message 2]
+```
+
+The system prompt defines:
+- The assistant's identity and behavior boundaries
+- Explicit refusal of persona changes and jailbreak attempts
+- Honest disclosure of capabilities and limitations
+- Language-adaptive responses
+
+**Why this matters:** Llama Guard catches harmful content at the input level. 
+The system prompt is a second, complementary layer — it constrains the model's 
+behavior even if a malicious input somehow passes the guardrail. Neither layer 
+alone is sufficient; both together follow defense-in-depth principles.
+
+**What it doesn't prevent:** A sufficiently large context window attack — flooding 
+the conversation history to push the system prompt out of the model's attention — 
+can degrade its effectiveness. This is mitigated by the message length limit and 
+the planned context truncation (see roadmap).
+
 
 ---
 
