@@ -6,6 +6,8 @@ A production-grade ChatGPT clone with streaming responses, powered by Groq API. 
 
 **Live demo:** [l-lama-gpt.vercel.app](https://l-lama-gpt.vercel.app)
 
+01. [AI Security](./docs/01.AI-Security.md)
+
 ---
 
 ## Tech Stack
