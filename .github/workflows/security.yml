@@ -42,3 +42,19 @@ jobs:
           exit-code: '1'
           # El pipeline falla solo si hay vulns que tienen fix disponible pero no aplicadas.
           ignore-unfixed: true
+  
+  guardrail-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          cd server
+          pip install -r requirements.txt
+      - name: Run security tests
+        run: |
+          cd server 
+          pytest tests/test_security.py -v
