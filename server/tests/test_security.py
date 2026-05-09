@@ -8,7 +8,7 @@ from app.security import validate_message
 @pytest.mark.asyncio
 async def test_message_too_long():
     with pytest.raises(HTTPException) as exc:
-        await validate_message("a" + 2001)
+        await validate_message("a" * 2001)
     assert exc.value.status_code == 400
 
 # --- Tests with Llama Guard mocked ---
