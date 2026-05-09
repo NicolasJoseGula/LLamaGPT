@@ -39,7 +39,7 @@ def generate_stream_groq(messages: list[Message]):
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT}, # <- always first!!!
             *[{"role": m.role, "content": m.content} for m in messages],
-        ]
+        ],
         model="llama-3.1-8b-instant",
         stream=True,
     )
