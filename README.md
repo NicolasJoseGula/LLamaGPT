@@ -1,7 +1,7 @@
 <h1 align="center">LlamaGPT</h1>
 
 <p align="center">
-  <img src="./images/logo.png" alt="LlamaGPT logo" width="600"/>
+  <img src="./images/logo.png" alt="LlamaGPT logo" width="800"/>
 </p>
 
 A production-grade ChatGPT clone with streaming responses, powered by Groq API. Built to demonstrate full-stack AI application development with modern DevOps and AI Security practices.
