@@ -20,7 +20,7 @@ async def validate_message(content: str) -> None:
             # Older version - deprecation date 03/05/2026
             # https://huggingface.co/meta-llama/Llama-Guard-4-12B
             # model="meta-llama/llama-guard-4-12b",
-            model="openai/gpt-oss-safeguard-20b",
+            model="meta-llama/llama-prompt-guard-2-86m",
             messages=[{"role":"user", "content":content}],
             max_tokens=10,
         )
