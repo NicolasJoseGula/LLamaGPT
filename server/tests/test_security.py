@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from fastapi import HTTPException
 from app.security import validate_message
+from app.routes.chat import trim_messages, MAX_MESSAGES, Message
 
 # -- Test: Max length (local validation) --
 
@@ -39,3 +40,26 @@ async def test_guardrail_fails_open():
         mock_groq.return_value.chat.completions.create.side_effect = Exception("Groq timeout")
         # Con fail open, no debe lanzar excepción
         await validate_message("Hello")  # pasa sin error
+        
+# --- Tests: context trimming ---
+
+def test_trim_messages_under_limit():
+    messages = [Message(role="user", content="hola") for _ in range(10)]
+    result = trim_messages(messages)
+    assert len(result) == 10
+
+def test_trim_messages_over_limit():
+    messages = [Message(role="user", content=f"mensaje {i}") for i in range(25)]
+    result = trim_messages(messages)
+    assert len(result) == MAX_MESSAGES
+
+def test_trim_messages_keeps_latest():
+    messages = [Message(role="user", content=f"mensaje {i}") for i in range(25)]
+    result = trim_messages(messages)
+    assert result[0].content == "mensaje 5"
+    assert result[-1].content == "mensaje 24"
+
+def test_trim_messages_exact_limit():
+    messages = [Message(role="user", content="hola") for _ in range(20)]
+    result = trim_messages(messages)
+    assert len(result) == 20
