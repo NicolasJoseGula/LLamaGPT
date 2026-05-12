@@ -44,11 +44,32 @@ def log(level: str, event: str, **kwargs):
         json.dumps({"event": event, **kwargs})
     )
 
+MAX_MESSAGES = 20 # Maximo 10 turnos de conversacion (user + assistant)
+
+def trim_messages(messages: list[Message]) -> list[Message]:
+    if len(messages) <= MAX_MESSAGES:
+        return messages
+    
+    # Siempre conservo el primer mensaje del usuario (contexto inicial)
+    # y los ultimos MAX_MESSAGES mensajes
+    trimmed = messages[-MAX_MESSAGES:]
+    
+    log("info", "context_trimmed",
+        original_count=len(messages),
+        trimmed_count=len(messages)
+    )
+    
+    return trimmed
+
+
 def generate_stream_groq(messages: list[Message]):
+    
+    trimmed = trim_messages(messages)
+    
     stream = client.chat.completions.create(
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT}, # <- always first!!!
-            *[{"role": m.role, "content": m.content} for m in messages],
+            *[{"role": m.role, "content": m.content} for m in trimmed],
         ],
         model="llama-3.1-8b-instant",
         stream=True,
