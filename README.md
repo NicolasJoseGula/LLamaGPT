@@ -238,7 +238,7 @@ Every push to `main` triggers automated workflows:
 - Next.js build verification
 
 **`security.yml` — Security Scanning**
-- **Gitleaks** — detects hardcoded secrets in the codebase
+- **Trufflehog** — detects hardcoded secrets in the codebase
 - **Safety** — scans Python dependencies for known CVEs
 - **Trivy** — scans the Docker image for OS and package vulnerabilities
 - **Bandit** — static analysis of Python application code
