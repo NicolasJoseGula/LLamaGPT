@@ -172,6 +172,53 @@ for incident response and abuse detection.
 
 ---
 
+### Context window management
+
+Every request trims the conversation history to the last 20 messages 
+(10 user + 10 assistant turns) before sending to the LLM.
+
+**Why this matters from a security perspective:**
+- **Context overflow attack** — a long conversation can push the system prompt 
+  out of the model's effective attention window, weakening its restrictions. 
+  Trimming keeps the system prompt always within the first tokens the model sees.
+- **Cost attack** — an attacker can run up API costs by maintaining 
+  artificially long conversations. The 20-message cap bounds the maximum 
+  token cost per request.
+
+**Why 20 messages and not token-based trimming:**
+Production systems calculate context in tokens using the model's native 
+tokenizer (SentencePiece for Llama). This project uses message count as a 
+deliberate simplification — Llama 3.1's 128k context window means token 
+overflow is not a practical risk at this scale. The real risks (cost and 
+attention dilution) are both addressed by the message cap.
+
+The production-grade approach would log `response.usage.total_tokens` 
+from Groq's API response to monitor real token cost per request and set 
+the trim threshold based on observed usage patterns.
+
+---
+
+### Security test suite
+
+Every push runs an automated security test suite via GitHub Actions:
+
+| Test | What it verifies |
+|---|---|
+| `test_message_too_long` | Input length validation blocks messages over 2000 chars |
+| `test_safe_message_passes` | Llama Guard allows benign messages through |
+| `test_unsafe_message_blocked` | Llama Guard blocks harmful content (status 400) |
+| `test_guardrail_fails_open` | System stays available if Llama Guard times out |
+| `test_trim_messages_under_limit` | Short conversations are not modified |
+| `test_trim_messages_over_limit` | Long conversations are trimmed to 20 messages |
+| `test_trim_messages_keeps_latest` | Trimming preserves the most recent context |
+| `test_trim_messages_exact_limit` | Boundary condition at exactly 20 messages |
+
+All tests mock external API calls — the suite runs without a real 
+`GROQ_API_KEY` and adds zero cost per pipeline execution.
+
+---
+
+
 ## Features
 
 - Real-time streaming responses (Server-Sent Events)

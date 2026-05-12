@@ -6,6 +6,9 @@ from slowapi.errors import RateLimitExceeded
 from app.routes import chat
 from app.config import settings
 import logging
+from fastapi.responses import JSONResponse
+from groq import Groq
+import time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,5 +40,42 @@ app.add_middleware(
 app.include_router(chat.router)
 
 @app.get("/health")
-def health():
-    return {"status": "ok"}
+async def health():
+    start = time.time()
+    checks = {}
+
+    # Verifica que la API key existe
+    if not settings.groq_api_key:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "error",
+                "checks": {"groq_api_key": "missing"}
+            }
+        )
+
+    # 2. Verificar que Groq responde
+    try:
+        client = Groq(api_key=settings.groq_api_key)
+        client.models.list()  # llamada liviana, no genera tokens
+        checks["groq"] = "ok"
+    except Exception as e:
+        checks["groq"] = f"error: {str(e)}"
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "error",
+                "checks": checks,
+                "duration_ms": round((time.time() - start) * 1000)
+            }
+        )
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "ok",
+            "version": "1.0.0",
+            "checks": checks,
+            "duration_ms": round((time.time() - start) * 1000)
+        }
+    )
